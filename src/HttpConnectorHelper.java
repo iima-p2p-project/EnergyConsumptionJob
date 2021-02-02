@@ -195,7 +195,7 @@ public ArrayList<JSONObject> sendPostWithTokenForKiot(String url, JSONObject par
 				listOfObjects.add(jsonObject1);
 				listOfObjects.add(js2);
 				// print result
-				System.out.println(response.toString());
+			//	System.out.println(response.toString());
 			} 
 			
 		else {
