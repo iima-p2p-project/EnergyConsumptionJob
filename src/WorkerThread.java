@@ -57,18 +57,22 @@ class WorkerThread implements Runnable {
 	public void getStartTxDataFromKiot() throws ClassNotFoundException, SQLException, JSONException, IOException, ParseException {
 		final long HOUR = 3600 * 1000; // in milli-seconds.
 		final long HALFHOUR = 1800 * 1000;
-		// Date d1=new Date(new Date().getTime() +5*HOUR+HALFHOUR - 24*HOUR);
-		Date d1 = new Date(new Date().getTime() - 24 * HOUR);
-		int day = d1.getDate();
-		int year = d1.getYear() + 1900;
-		int month = d1.getMonth() + 1;
-	       //SimpleDateFormat dt1 = new SimpleDateFormat("2018-03-06");
-	      
-	     
-//			String[] values = startTime.split("-");
-//			String[] dateTime =values[2].split(" "); 
-//			String[] time = dateTime[1].split(":");
+		final long ONE_MINUTE_IN_MILLIS=60000;//millisecs
 		
+		  Date dnew=new Date(new Date().getTime() +5*HOUR+HALFHOUR- 30*ONE_MINUTE_IN_MILLIS);
+		  int day = dnew.getDate();
+			int year = dnew.getYear() + 1900;
+			int month = dnew.getMonth() + 1;
+	        SimpleDateFormat dt1 = new SimpleDateFormat("yyyy-MM-dd");
+	       //SimpleDateFormat dt1 = new SimpleDateFormat("2018-03-06");
+	        System.out.println(dt1.format(dnew));
+	        SimpleDateFormat dt2 = new SimpleDateFormat("HH:mm");
+	        String datenew = dt1.format(dnew);
+	        String timenew = dt2.format(dnew);
+	        String startTime = datenew +" "+timenew;
+		String[] values = startTime.split("-");
+		String[] dateTime =values[2].split(" "); 
+		String[] time = dateTime[1].split(":");
 		ArrayList<String> deviceIds = new ArrayList<String>();
 		deviceIds.add(kiotDeviceId);
 		double meterReading = 0;
@@ -76,23 +80,28 @@ class WorkerThread implements Runnable {
 		HttpConnectorHelper httpconnectorhelper = new HttpConnectorHelper();
 		JSONObject input = new JSONObject();
 		JSONObject payload = new JSONObject();
+		JSONObject filterSlots = new JSONObject();
+		filterSlots.put("hour", Integer.parseInt(time[0]));
+		filterSlots.put("minute", Integer.parseInt(time[1]));
 		payload.put("duration", "day");
 		payload.put("group_by_minutes", "15");
+		payload.put("filter_slot", filterSlots);
 		payload.put("year", year);
 		payload.put("month", month);
 		payload.put("startDay", day);
 		payload.put("device_ids", deviceIds);
 		input.put("payload", payload);
 		input.put("intent", "action.entities.ENERGY_DATA");
+		//System.out.println("Request ----- >" + input);
 		ArrayList<JSONObject> responseFromDevice = httpconnectorhelper.sendPostWithTokenForKiot(
 				"https://api.kiot.io/integrations/ctp/go", input,
 				bearerToken);
-		parseAndStoreResponse(responseFromDevice,d1);
+		parseAndStoreResponse(responseFromDevice,dnew);
 		}
 
 	public static void main(String args[]) throws ClassNotFoundException, SQLException, JSONException, IOException, ParseException {
-		WorkerThread wk = new WorkerThread(16, "1", "1",9);
-		wk.getStartTxDataFromKiot();
+	//	WorkerThread wk = new WorkerThread(16, "1", "1",9);
+	//	wk.getStartTxDataFromKiot();
 		
 	}
 	

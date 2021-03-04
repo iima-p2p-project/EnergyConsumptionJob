@@ -10,7 +10,7 @@ import java.util.concurrent.Executors;
 
 import org.json.JSONException;
 
-import com.mysql.jdbc.DatabaseMetaData;
+
 
 
 class StartThread implements Runnable{  

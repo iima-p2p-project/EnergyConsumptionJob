@@ -27,16 +27,24 @@ public class ScheduleDAO {
 	 {
 		 PreparedStatement pstmt = null;
 		//JDBCConnection connref =new JDBCConnection();
+		 
 		 if (con == null ) {
 				con = JDBCConnection.getOracleConnection();
 		 }
 		//	System.out.println("select aso.sell_order_id,ubc.private_key,ubc.public_key,abc.order_id from all_sell_orders aso,all_blockchain_orders abc, user_blockchain_keys ubc where aso.transfer_start_ts ='"+date+" "+time+"' and abc.general_order_id=aso.sell_order_id and abc.order_type='SELL_ORDER' and ubc.user_id  = aso.seller_id and aso.order_status_id=1");
 		 // String query="select aso.sell_order_id,ubc.private_key,ubc.public_key,abc.order_id,abc.all_blockchain_orders_id from all_sell_orders aso,all_blockchain_orders abc, user_blockchain_keys ubc where aso.transfer_start_ts ='"+date+" "+time+"' and abc.general_order_id=aso.sell_order_id and abc.order_type='SELL_ORDER' and ubc.user_id  = aso.seller_id and aso.order_status_id=3";
-		 	String query="SELECT all_users.user_id,all_kiot_switches.custom_data,kiot_user_mappings.bearer_token,user_dr_devices.user_dr_device_id FROM all_users, user_dr_devices, all_kiot_switches,kiot_user_mappings\r\n" + 
-		 			"where all_users.user_id = user_dr_devices.user_id\r\n" + 
-		 			"and all_kiot_switches.id = user_dr_devices.port_number\r\n" + 
-		 			"and kiot_user_mappings.contract_number = all_users.dr_contract_number\r\n" + 
-		 			"and all_users.dr_contract_number is not null";
+//		 	String query="SELECT all_users.user_id,all_kiot_switches.custom_data,kiot_user_mappings.bearer_token,user_dr_devices.user_dr_device_id FROM all_users, user_dr_devices, all_kiot_switches,kiot_user_mappings\r\n" + 
+//		 			"where all_users.user_id = user_dr_devices.user_id\r\n" + 
+//		 			"and all_kiot_switches.id = user_dr_devices.port_number\r\n" + 
+//		 			"and kiot_user_mappings.contract_number = all_users.dr_contract_number\r\n" + 
+//		 			"and all_users.dr_contract_number is not null";
+		 
+		 String query ="SELECT all_users.user_id,all_kiot_switches.custom_data,kiot_user_mappings.bearer_token,user_dr_devices.user_dr_device_id FROM all_users,\r\n"
+		 		+ " user_dr_devices, all_kiot_switches,kiot_user_mappings"
+		 		+ "		 			where all_users.user_id = user_dr_devices.user_id\r\n"
+		 		+ "		 			and all_kiot_switches.id = user_dr_devices.port_number\r\n"
+		 		+ "		 			and kiot_user_mappings.contract_number = all_users.dr_contract_number\r\n"
+		 		+ "		 			and all_users.dr_contract_number is not null";
 			//String query="select a.event_id from all_events a where  a.event_status_id= 3 and a.event_end_time ='2020-07-29 13:15:00'";
 			pstmt=con.prepareStatement(query);
 		// pstmt.setString(1,controllerId);
@@ -51,7 +59,6 @@ public class ScheduleDAO {
 			 data.put("kiotDeviceId",(String)js.get("ud_id"));
 			 data.put("userDeviceId",rs.getInt("user_dr_device_id"));
 			 //data.put("endTime","2020-07-29 13:15:00");
-			 //data.put("startTime","2020-07-29 13:00:00");
 			 al.add(data);
 			// initiateActions(rs.getString("user_id"),rs.getString("status"),rs.getString("controller_id"),rs.getInt("device_id"),"Timer");
 			//topic=rs.getString(1);
